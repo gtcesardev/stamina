@@ -347,7 +347,7 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="loginDate">📅 Data Login (opcional):</label>
-                                <input type="text" id="loginDate" name="loginDate" 
+                                <input type="date" id="loginDate" name="loginDate" 
                                     placeholder="Ex: 16/12/2024">
                             </div>
                             <div class="form-group">
@@ -403,7 +403,20 @@ function isValidTime(str) {
 }
 
             
-            
+            function formatDateToBR(isoDate) {
+    if (!isoDate) return '';
+    const [year, month, day] = isoDate.split('-');
+    return `${day}/${month}/${year}`;
+}
+
+const data = {
+  current_stamina: raw.currentStamina,
+  logout_date: raw.logoutDate,
+  logout_time: raw.logoutTime,
+  login_date: formatDateToBR(raw.loginDate),  // ✅ conversão aplicada aqui
+  login_time: raw.loginTime
+};
+
             
             async function calculateStamina() {
                 const btn = document.getElementById('calculateBtn');
@@ -656,16 +669,7 @@ if (loginDateFilled && loginTimeFilled) {
                 e.target.value = value;
             });
 
-            document.getElementById('loginDate').addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length >= 2) {
-                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
-                    if (value.length >= 5) {
-                        value = value.substring(0, 5) + '/' + value.substring(5, 9);
-                    }
-                }
-                e.target.value = value;
-            });
+            
         </script>
     </body>
     </html>
