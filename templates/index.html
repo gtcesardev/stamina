@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ Tibia Stamina Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(42, 42, 42, 0.9);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4a9eff 0%, #00d4aa 100%);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.1; }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            margin-top: 10px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-section {
+            background: rgba(45, 45, 45, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .form-section:hover {
+            border-color: rgba(74, 158, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #4a9eff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e0e0e0;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4a9eff;
+            background: rgba(74, 158, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00d4aa 0%, #00b894 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            background: rgba(45, 45, 45, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 180, 71, 0.2);
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid #4a9eff;
+        }
+
+        .result-item.success {
+            border-left-color: #00d4aa;
+        }
+
+        .result-item.warning {
+            border-left-color: #ffb347;
+        }
+
+        .result-item.info {
+            border-left-color: #4a9eff;
+        }
+
+        .result-icon {
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .result-text {
+            flex: 1;
+        }
+
+        .result-text h4 {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .result-text p {
+            color: #b0b0b0;
+            font-size: 0.9em;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #4a9eff 0%, #357abd 100%);
+            padding: 10px 20px;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #4a9eff;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid rgba(74, 158, 255, 0.3);
+            border-top: 3px solid #4a9eff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚔️ Tibia Stamina Calculator</h1>
+            <p>Calcule sua recuperação de stamina com precisão</p>
+        </div>
+
+        <div class="content">
+            <div class="error" id="errorMessage"></div>
+
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span>📊</span>
+                    Dados de Entrada
+                </h2>
+
+                <form id="staminaForm">
+                    <div class="form-group">
+                        <label for="currentStamina">⚡ Stamina Atual (HH:MM):</label>
+                        <input type="text" id="currentStamina" name="currentStamina" 
+                               placeholder="Ex: 25:30" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="logoutDate">📅 Data Logout (DD/MM/AAAA):</label>
+                            <input type="text" id="logoutDate" name="logoutDate" 
+                                   placeholder="Ex: 15/12/2024" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="logoutTime">🕐 Hora Logout (HH:MM):</label>
+                            <input type="text" id="logoutTime" name="logoutTime" 
+                                   placeholder="Ex: 14:30" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="loginDate">📅 Data Login (opcional):</label>
+                            <input type="text" id="loginDate" name="loginDate" 
+                                   placeholder="Ex: 16/12/2024">
+                        </div>
+                        <div class="form-group">
+                            <label for="loginTime">🕐 Hora Login (opcional):</label>
+                            <input type="text" id="loginTime" name="loginTime" 
+                                   placeholder="Ex: 08:00">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn" id="calculateBtn">
+                        🧮 CALCULAR STAMINA
+                    </button>
+                </form>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Calculando...</p>
+            </div>
+
+            <div class="results" id="results">
+                <h2 class="section-title">
+                    <span>📈</span>
+                    Resultados
+                </h2>
+                <div id="resultsContent"></div>
+                <button class="btn copy-btn" id="copyBtn">
+                    📋 COPIAR RESULTADOS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        
+        document.getElementById('staminaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateStamina();
+        });
+
+        document.getElementById('copyBtn').addEventListener('click', copyResults);
+
+        async function calculateStamina() {
+            const btn = document.getElementById('calculateBtn');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            const errorDiv = document.getElementById('errorMessage');
+            
+            // Limpar erros anteriores
+            hideError();
+            
+            // Mostrar loading
+            btn.disabled = true;
+            loading.classList.add('show');
+            results.classList.remove('show');
+            
+            try {
+                const formData = new FormData(document.getElementById('staminaForm'));
+                const data = Object.fromEntries(formData);
+                
+                const response = await fetch(`${API_URL}/calculate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'Erro na requisição');
+                }
+                
+                displayResults(result);
+                
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                btn.disabled = false;
+                loading.classList.remove('show');
+            }
+        }
+
+        function displayResults(data) {
+            const resultsContent = document.getElementById('resultsContent');
+            const results = document.getElementById('results');
+            
+            let html = '';
+            
+            // Stamina atual
+            html += `
+                <div class="result-item warning">
+                    <div class="result-icon">⚡</div>
+                    <div class="result-text">
+                        <h4>Stamina Atual</h4>
+                        <p>${data.current_stamina.formatted}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Detalhes da recuperação
+            html += `
+                <div class="result-item info">
+                    <div class="result-icon">🟠</div>
+                    <div class="result-text">
+                        <h4>Recuperação Laranja</h4>
+                        <p>${data.recovery.orange_formatted} (precisa ${data.recovery.orange_offline_time} offline)</p>
+                    </div>
+                </div>
+            `;
+            
+            html += `
+                <div class="result-item success">
+                    <div class="result-icon">🟢</div>
+                    <div class="result-text">
+                        <h4>Recuperação Verde</h4>
+                        <p>${data.recovery.green_formatted} (precisa ${data.recovery.green_offline_time} offline)</p>
+                    </div>
+                </div>
+            `;
+            
+            // Tempo offline total
+            html += `
+                <div class="result-item info">
+                    <div class="result-icon">⏳</div>
+                    <div class="result-text">
+                        <h4>Tempo Offline Total</h4>
+                        <p>${data.recovery.total_offline_formatted}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Stamina cheia
+            html += `
+                <div class="result-item success">
+                    <div class="result-icon">🕑</div>
+                    <div class="result-text">
+                        <h4>Stamina Cheia</h4>
+                        <p>${data.full_stamina_time.datetime}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Stamina futura (se fornecida)
+            if (data.future_stamina) {
+                html += `
+                    <div class="result-item success">
+                        <div class="result-icon">🔮</div>
+                        <div class="result-text">
+                            <h4>Stamina Futura</h4>
+                            <p>${data.future_stamina.formatted} (em ${data.future_stamina.login_time})</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            resultsContent.innerHTML = html;
+            results.classList.add('show');
+        }
+
+        function copyResults() {
+            const resultsContent = document.getElementById('resultsContent');
+            const resultItems = resultsContent.querySelectorAll('.result-item');
+            
+            let text = '⚔️ TIBIA STAMINA CALCULATOR - RESULTADOS\n\n';
+            
+            resultItems.forEach(item => {
+                const title = item.querySelector('h4').textContent;
+                const description = item.querySelector('p').textContent;
+                text += `${title}: ${description}\n`;
+            });
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ COPIADO!';
+                btn.style.background = 'linear-gradient(135deg, #00d4aa 0%, #00b894 100%)';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'linear-gradient(135deg, #4a9eff 0%, #357abd 100%)';
+                }, 2000);
+            }).catch(() => {
+                showError('Erro ao copiar para área de transferência');
+            });
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = `❌ ${message}`;
+            errorDiv.classList.add('show');
+            
+            setTimeout(() => {
+                hideError();
+            }, 5000);
+        }
+
+        function hideError() {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.classList.remove('show');
+        }
+
+        // Auto-fill data atual para logout
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const today = String(now.getDate()).padStart(2, '0') + '/' + 
+                         String(now.getMonth() + 1).padStart(2, '0') + '/' + 
+                         now.getFullYear();
+            
+            document.getElementById('logoutDate').value = today;
+        });
+
+        // Adicionar máscaras de input
+        document.getElementById('currentStamina').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + ':' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById('logoutTime').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + ':' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById('loginTime').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + ':' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById('logoutDate').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                if (value.length >= 5) {
+                    value = value.substring(0, 5) + '/' + value.substring(5, 9);
+                }
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById('loginDate').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                if (value.length >= 5) {
+                    value = value.substring(0, 5) + '/' + value.substring(5, 9);
+                }
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
