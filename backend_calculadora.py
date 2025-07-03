@@ -12,7 +12,6 @@ class StaminaCalculator:
         self.max_stamina = 42.0
     
     def parse_stamina(self, stamina_str):
-        """Parse stamina string no formato HH:MM"""
         try:
             if ':' not in stamina_str:
                 raise ValueError("Use o formato HH:MM")
@@ -26,7 +25,6 @@ class StaminaCalculator:
             raise ValueError(f"Formato de stamina inválido! {str(e)}")
     
     def parse_datetime(self, date_str, time_str):
-        """Parse data e hora strings"""
         try:
             date = datetime.strptime(date_str, "%d/%m/%Y")
             time = datetime.strptime(time_str, "%H:%M")
@@ -35,7 +33,6 @@ class StaminaCalculator:
             raise ValueError("Data/hora inválida! Use DD/MM/AAAA e HH:MM")
     
     def calculate_offline_time(self, current_stamina):
-        """Calcula tempo offline necessário para recuperar stamina"""
         if current_stamina >= self.max_stamina:
             raise ValueError("Stamina já está cheia!")
         
@@ -50,7 +47,6 @@ class StaminaCalculator:
         return orange, green, total_offline
     
     def calculate_exact_stamina(self, current_stamina, offline_hours):
-        """Calcula stamina exata após tempo offline"""
         if offline_hours is None:
             return None
         
@@ -68,13 +64,11 @@ class StaminaCalculator:
             return min(current_stamina + recovered_green, self.max_stamina)
     
     def hours_to_hhmm(self, hours):
-        """Converte horas decimais para formato HH:MM"""
         h = int(hours)
         m = int((hours - h) * 60)
         return f"{h:02d}:{m:02d}"
     
     def hours_to_ddhh(self, hours):
-        """Converte horas para formato DDd HHh MMm"""
         days = int(hours // 24)
         h = hours % 24
         m = int((h - int(h)) * 60)
@@ -94,23 +88,19 @@ def calculate_stamina():
     try:
         data = request.json
         
-        # Validar dados obrigatórios
         required_fields = ['current_stamina', 'logout_date', 'logout_time']
         for field in required_fields:
             if not data.get(field):
                 return jsonify({'error': f'Campo {field} é obrigatório'}), 400
         
-        # Parse stamina atual
         stamina_str = data['current_stamina'].strip()
         horas, minutos = calculator.parse_stamina(stamina_str)
         current_stamina = horas + minutos / 60
         
-        # Parse logout
         logout_date_str = data['logout_date'].strip()
         logout_time_str = data['logout_time'].strip()
         logout_time = calculator.parse_datetime(logout_date_str, logout_time_str)
         
-        # Parse login opcional
         login_date_str = data.get('login_date', '').strip()
         login_time_str = data.get('login_time', '').strip()
         has_login_time = login_date_str and login_time_str
@@ -124,14 +114,11 @@ def calculate_stamina():
                 return jsonify({'error': 'Login deve ser após o logout!'}), 400
             offline_hours = (login_time - logout_time).total_seconds() / 3600
         
-        # Calcular recuperação
         orange, green, total_offline = calculator.calculate_offline_time(current_stamina)
         exact_recovery = calculator.calculate_exact_stamina(current_stamina, offline_hours)
         
-        # Calcular tempo para stamina cheia
         full_time = logout_time + timedelta(hours=total_offline)
         
-        # Preparar resposta
         response = {
             'current_stamina': {
                 'hours': horas,
@@ -154,7 +141,6 @@ def calculate_stamina():
             }
         }
         
-        # Adicionar stamina futura se calculada
         if exact_recovery is not None:
             stamina_future = min(exact_recovery, 42.0)
             h_future = int(stamina_future)
@@ -178,7 +164,6 @@ def health_check():
     return jsonify({'status': 'OK', 'message': 'Tibia Stamina Calculator API'})
 
 if __name__ == '__main__':
-    # Criar diretório templates se não existir
     if not os.path.exists('templates'):
         os.makedirs('templates')
     
