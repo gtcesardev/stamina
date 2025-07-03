@@ -444,14 +444,27 @@ if (!isValidTime(data.logout_time)) {
     showError('Hora de logout inválida! Use HH:MM');
     return;
 }
-if (data.login_date && !isValidDate(data.login_date)) {
-    showError('Data de login inválida! Use DD/MM/AAAA');
+const loginDateFilled = data.login_date && data.login_date.trim() !== '';
+const loginTimeFilled = data.login_time && data.login_time.trim() !== '';
+
+// Se apenas um dos campos estiver preenchido, mostra erro
+if ((loginDateFilled && !loginTimeFilled) || (!loginDateFilled && loginTimeFilled)) {
+    showError('Preencha data e hora de login completos ou deixe ambos em branco');
     return;
 }
-if (data.login_time && !isValidTime(data.login_time)) {
-    showError('Hora de login inválida! Use HH:MM');
-    return;
+
+// Se ambos preenchidos, validar formatos
+if (loginDateFilled && loginTimeFilled) {
+    if (!isValidDate(data.login_date)) {
+        showError('Data de login inválida! Use DD/MM/AAAA');
+        return;
+    }
+    if (!isValidTime(data.login_time)) {
+        showError('Hora de login inválida! Use HH:MM');
+        return;
+    }
 }
+
 
                     
                     const response = await fetch(`${API_URL}/calculate`, {
