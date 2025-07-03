@@ -598,51 +598,35 @@
             document.getElementById('logoutDate').value = today;
         });
 
-        document.getElementById('currentStamina').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length >= 2) {
-                value = value.substring(0, 2) + ':' + value.substring(2, 4);
-            }
-            e.target.value = value;
-        });
+        function applyTimeMask(input) {
+    input.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '').slice(0, 4);
+        if (value.length >= 3) {
+            value = value.slice(0, 2) + ':' + value.slice(2);
+        }
+        e.target.value = value;
+    });
+}
 
-        document.getElementById('logoutTime').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length >= 2) {
-                value = value.substring(0, 2) + ':' + value.substring(2, 4);
-            }
-            e.target.value = value;
-        });
+function applyDateMask(input) {
+    input.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '').slice(0, 8);
+        if (value.length >= 5) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4);
+        } else if (value.length >= 3) {
+            value = value.slice(0, 2) + '/' + value.slice(2);
+        }
+        e.target.value = value;
+    });
+}
 
-        document.getElementById('loginTime').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length >= 2) {
-                value = value.substring(0, 2) + ':' + value.substring(2, 4);
-            }
-            e.target.value = value;
-        });
+applyTimeMask(document.getElementById('currentStamina'));
+applyTimeMask(document.getElementById('logoutTime'));
+applyTimeMask(document.getElementById('loginTime'));
 
-        document.getElementById('logoutDate').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length >= 2) {
-                value = value.substring(0, 2) + '/' + value.substring(2, 4);
-                if (value.length >= 5) {
-                    value = value.substring(0, 5) + '/' + value.substring(5, 9);
-                }
-            }
-            e.target.value = value;
-        });
+applyDateMask(document.getElementById('logoutDate'));
+applyDateMask(document.getElementById('loginDate'));
 
-        document.getElementById('loginDate').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length >= 2) {
-                value = value.substring(0, 2) + '/' + value.substring(2, 4);
-                if (value.length >= 5) {
-                    value = value.substring(0, 5) + '/' + value.substring(5, 9);
-                }
-            }
-            e.target.value = value;
-        });
     </script>
 </body>
 </html>
