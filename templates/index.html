@@ -391,6 +391,20 @@
 
             document.getElementById('copyBtn').addEventListener('click', copyResults);
 
+            
+            // ✅ Valida se a data está no formato DD/MM/AAAA
+function isValidDate(str) {
+    return /^\d{2}\/\d{2}\/\d{4}$/.test(str);
+}
+
+// ✅ Valida se a hora está no formato HH:MM
+function isValidTime(str) {
+    return /^\d{2}:\d{2}$/.test(str);
+}
+
+            
+            
+            
             async function calculateStamina() {
                 const btn = document.getElementById('calculateBtn');
                 const loading = document.getElementById('loading');
@@ -417,6 +431,27 @@
     login_date: raw.loginDate,
     login_time: raw.loginTime
     };
+
+
+
+
+    // ✅ Validação de formato
+if (!isValidDate(data.logout_date)) {
+    showError('Data de logout inválida! Use DD/MM/AAAA');
+    return;
+}
+if (!isValidTime(data.logout_time)) {
+    showError('Hora de logout inválida! Use HH:MM');
+    return;
+}
+if (data.login_date && !isValidDate(data.login_date)) {
+    showError('Data de login inválida! Use DD/MM/AAAA');
+    return;
+}
+if (data.login_time && !isValidTime(data.login_time)) {
+    showError('Hora de login inválida! Use HH:MM');
+    return;
+}
 
                     
                     const response = await fetch(`${API_URL}/calculate`, {
@@ -476,7 +511,7 @@
                         <div class="result-icon">🟢</div>
                         <div class="result-text">
                             <h4>Recuperação Verde</h4>
-                            <p>${data.recovery.green_formatted} (precisa ${data.recovery.green_offline_time} offline)</p>
+                            <p>${data.recovery  .green_formatted} (precisa ${data.recovery.green_offline_time} offline)</p>
                         </div>
                     </div>
                 `;
