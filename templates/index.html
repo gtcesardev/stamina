@@ -391,21 +391,12 @@
 
         document.getElementById('copyBtn').addEventListener('click', copyResults);
 
-        // Valida se a data está no formato DD/MM/AAAA
         function isValidDate(str) {
             return /^\d{2}\/\d{2}\/\d{4}$/.test(str);
         }
 
-        // Valida se a hora está no formato HH:MM
         function isValidTime(str) {
             return /^\d{2}:\d{2}$/.test(str);
-        }
-
-        // Converte data de ISO para formato brasileiro
-        function formatDateToBR(isoDate) {
-            if (!isoDate) return '';
-            const [year, month, day] = isoDate.split('-');
-            return `${day}/${month}/${year}`;
         }
 
         async function calculateStamina() {
@@ -414,10 +405,8 @@
             const results = document.getElementById('results');
             const errorDiv = document.getElementById('errorMessage');
             
-            // Limpar erros anteriores
             hideError();
             
-            // Mostrar loading
             btn.disabled = true;
             loading.classList.add('show');
             results.classList.remove('show');
@@ -426,7 +415,6 @@
                 const formData = new FormData(document.getElementById('staminaForm'));
                 const raw = Object.fromEntries(formData);
 
-                // Renomeia os campos para o padrão que o backend espera
                 const data = {
                     current_stamina: raw.currentStamina,
                     logout_date: raw.logoutDate,
@@ -435,7 +423,6 @@
                     login_time: raw.loginTime
                 };
 
-                // Validação de formato
                 if (!isValidDate(data.logout_date)) {
                     showError('Data de logout inválida! Use DD/MM/AAAA');
                     return;
@@ -448,13 +435,11 @@
                 const loginDateFilled = data.login_date && data.login_date.trim() !== '';
                 const loginTimeFilled = data.login_time && data.login_time.trim() !== '';
 
-                // Se apenas um dos campos estiver preenchido, mostra erro
                 if ((loginDateFilled && !loginTimeFilled) || (!loginDateFilled && loginTimeFilled)) {
                     showError('Preencha data e hora de login completos ou deixe ambos em branco');
                     return;
                 }
 
-                // Se ambos preenchidos, validar formatos
                 if (loginDateFilled && loginTimeFilled) {
                     if (!isValidDate(data.login_date)) {
                         showError('Data de login inválida! Use DD/MM/AAAA');
@@ -466,30 +451,6 @@
                     }
                 }
 
-                // Simula uma chamada para API (remova quando conectar ao backend real)
-                // Este é um exemplo de resposta mockada
-                const mockResponse = {
-                    current_stamina: {
-                        formatted: data.current_stamina
-                    },
-                    recovery: {
-                        orange_formatted: "30:00",
-                        orange_offline_time: "5h 30min",
-                        green_formatted: "42:00",
-                        green_offline_time: "17h 30min",
-                        total_offline_formatted: "17h 30min"
-                    },
-                    full_stamina_time: {
-                        datetime: "04/07/2025 às 12:00"
-                    },
-                    future_stamina: data.login_date && data.login_time ? {
-                        formatted: "35:45",
-                        login_time: `${data.login_date} às ${data.login_time}`
-                    } : null
-                };
-
-                // Descomente as linhas abaixo quando conectar ao backend real
-                
                 const response = await fetch(`${API_URL}/calculate`, {
                     method: 'POST',
                     headers: {
@@ -506,10 +467,6 @@
                 
                 displayResults(result);
                 
-
-                // Usando resposta mockada por enquanto
-                
-                
             } catch (error) {
                 showError(error.message);
             } finally {
@@ -524,7 +481,6 @@
             
             let html = '';
             
-            // Stamina atual
             html += `
                 <div class="result-item warning">
                     <div class="result-icon">⚡</div>
@@ -535,7 +491,6 @@
                 </div>
             `;
             
-            // Detalhes da recuperação
             html += `
                 <div class="result-item info">
                     <div class="result-icon">🟠</div>
@@ -556,7 +511,6 @@
                 </div>
             `;
             
-            // Tempo offline total
             html += `
                 <div class="result-item info">
                     <div class="result-icon">⏳</div>
@@ -567,7 +521,6 @@
                 </div>
             `;
             
-            // Stamina cheia
             html += `
                 <div class="result-item success">
                     <div class="result-icon">🕑</div>
@@ -578,7 +531,6 @@
                 </div>
             `;
             
-            // Stamina futura (se fornecida)
             if (data.future_stamina) {
                 html += `
                     <div class="result-item success">
@@ -637,7 +589,6 @@
             errorDiv.classList.remove('show');
         }
 
-        // Auto-fill data atual para logout
         document.addEventListener('DOMContentLoaded', function() {
             const now = new Date();
             const today = String(now.getDate()).padStart(2, '0') + '/' + 
@@ -647,7 +598,6 @@
             document.getElementById('logoutDate').value = today;
         });
 
-        // Máscaras de input
         document.getElementById('currentStamina').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length >= 2) {
