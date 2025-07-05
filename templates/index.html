@@ -91,7 +91,7 @@
             font-size: 1.3em;
             font-weight: bold;
             margin-bottom: 20px;
-            color: #4a9eff;
+            color: #ffffff !important;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -288,6 +288,41 @@
             100% { transform: rotate(360deg); }
         }
 
+        .useful-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .useful-links a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.03);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .useful-links a:hover {
+            background: rgba(74, 158, 255, 0.1);
+            border-color: rgba(74, 158, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.2);
+        }
+
+        .useful-links a::before {
+            content: '🔗';
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -304,6 +339,10 @@
 
             .content {
                 padding: 20px;
+            }
+
+            .useful-links {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -361,6 +400,20 @@
                         🧮 CALCULAR STAMINA
                     </button>
                 </form>
+            </div>
+
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span>🔗</span>
+                    Links Úteis
+                </h2>
+                <div class="useful-links">
+                    <a href="https://www.exevopan.com/pt/calculators/loot-split" target="_blank">Divisão de Loot</a>
+                    <a href="https://www.exevopan.com/pt/calculators/imbuements-cost" target="_blank">Custo de Imbuement</a>
+                    <a href="https://tibiapal.com/hunting" target="_blank">Locais de Caça</a>
+                    <a href="https://tibiapal.com/bosstiary" target="_blank">Guia de Bosstiary</a>
+                    <a href="https://tibiapal.com/hunting" target="_blank">Hunt Mage Solo</a>
+                </div>
             </div>
 
             <div class="loading" id="loading">
@@ -599,34 +652,33 @@
         });
 
         function applyTimeMask(input) {
-    input.addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '').slice(0, 4);
-        if (value.length >= 3) {
-            value = value.slice(0, 2) + ':' + value.slice(2);
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                if (value.length >= 3) {
+                    value = value.slice(0, 2) + ':' + value.slice(2);
+                }
+                e.target.value = value;
+            });
         }
-        e.target.value = value;
-    });
-}
 
-function applyDateMask(input) {
-    input.addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '').slice(0, 8);
-        if (value.length >= 5) {
-            value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4);
-        } else if (value.length >= 3) {
-            value = value.slice(0, 2) + '/' + value.slice(2);
+        function applyDateMask(input) {
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '').slice(0, 8);
+                if (value.length >= 5) {
+                    value = value.slice(0, 2) + '/' + value.slice(2, 4) + '/' + value.slice(4);
+                } else if (value.length >= 3) {
+                    value = value.slice(0, 2) + '/' + value.slice(2);
+                }
+                e.target.value = value;
+            });
         }
-        e.target.value = value;
-    });
-}
 
-applyTimeMask(document.getElementById('currentStamina'));
-applyTimeMask(document.getElementById('logoutTime'));
-applyTimeMask(document.getElementById('loginTime'));
+        applyTimeMask(document.getElementById('currentStamina'));
+        applyTimeMask(document.getElementById('logoutTime'));
+        applyTimeMask(document.getElementById('loginTime'));
 
-applyDateMask(document.getElementById('logoutDate'));
-applyDateMask(document.getElementById('loginDate'));
-
+        applyDateMask(document.getElementById('logoutDate'));
+        applyDateMask(document.getElementById('loginDate'));
     </script>
 </body>
 </html>
